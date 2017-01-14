@@ -67,6 +67,7 @@ function Install-WindowsUpdate
 }
 
 function Install-WebPackage
+
 {
     param(
         $packageName,
@@ -120,6 +121,7 @@ function Install-Home
     choco install cpu-z --limitoutput
     choco install handbrake --limitoutput
     choco install hexchat --limitoutput
+    choco install autohotkey --limitoutput
 }
 
 function Install-Dev
