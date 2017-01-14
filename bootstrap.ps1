@@ -1,4 +1,5 @@
-$installScript = 'https://raw.githubusercontent.com/MeikTranel/PersonalBoxstarter/master/box.ps1'
+$currentDir = Get-Location
+$installScript = "$currentDir\box.ps1"
 $webLauncherUrl = "http://boxstarter.org/package/nr/url?$installScript"
 $edgeVersion = Get-AppxPackage -Name Microsoft.MicrosoftEdge
 

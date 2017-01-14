@@ -3,13 +3,6 @@ $Boxstarter.NoPassword=$true
 $Boxstarter.AutoLogin=$true
 
 $checkpointPrefix = 'BoxStarter:Checkpoint:'
-
-$systemDriveLetter = "C"
-$dataDriveLetter = "D"
-$systemDrive = "$systemDriveLetter`:"
-$dataDrive = "$dataDriveLetter`:"
-$tempInstallFolder = New-InstallCache -InstallDrive
-
 function Get-CheckpointName
 {
     param
@@ -114,21 +107,18 @@ function Install-WebPackage
 function Install-CoreApps
 {
     choco install googlechrome-allusers     --limitoutput
+    choco install vlc --limitoutput
     choco install notepadplusplus.install   --limitoutput
     choco install 7zip.install              --limitoutput
-
-    # pin apps that update themselves
-    choco pin add -n=googlechrome
 }
 
 function Install-Home
 {
     choco install spotify --limitoutput
-    choco install vlc --limitoutput
     choco install steam --limitoutput
     choco install speccy --limitoutput
     choco install cpu-z --limitoutput
-    choco install handbrake.install --limitoutput
+    choco install handbrake --limitoutput
     choco install hexchat --limitoutput
 }
 
@@ -136,7 +126,6 @@ function Install-Dev
 {
     choco install git.install -params '"/GitAndUnixToolsOnPath"' --limitoutput
     choco install sourcetree 	            --limitoutput
-    choco pin add -n=sourcetree
     choco install nodejs                    --limitoutput
     choco install python		    --limitoutput
     choco install jdk8		        	    --limitoutput
@@ -146,6 +135,7 @@ function Install-Dev
     choco install diffmerge				    --limitoutput
     choco install atom                      --limitoutput
 
+    Write-BoxstarterMessage "Installing VS 2015 Community"
     # install visual studio 2015 community and extensions
     choco install visualstudio2015community #--limitoutput # -packageParameters "--AdminFile https://raw.githubusercontent.com/JonCubed/boxstarter/master/config/AdminDeployment.xml"
 
@@ -158,10 +148,7 @@ function Install-Dev
         Install-WebPackage '.NET Core Visual Studio Extension' 'exe' '/quiet' $tempInstallFolder https://go.microsoft.com/fwlink/?LinkID=827546 'DotNetCore.1.0.1-VS2015Tools.Preview2.0.3.exe' # for visual studio
         Set-Checkpoint -CheckpointName $VSCheckpoint -CheckpointValue 1
     }
-    # pin apps that update themselves
-    choco pin add -n=visualstudio2015community
-
-
+    Write-BoxstarterMessage "Installing Windows Dev Features"
     # Bash for windows
     $features = choco list --source windowsfeatures
     if ($features | Where-Object {$_ -like "*Linux*"})
@@ -270,6 +257,21 @@ function Set-Libraries
   Set-Checkpoint -CheckpointName $checkpoint -CheckpointValue 1
 }
 
+
+
+
+
+# Settings
+$systemDriveLetter = "C"
+$dataDriveLetter = "D"
+$systemDrive = "$systemDriveLetter`:"
+$dataDrive = "$dataDriveLetter`:"
+$tempInstallFolder = New-InstallCache -InstallDrive $systemDrive
+
+
+
+#Execution
+
 # disable chocolatey default confirmation behaviour (no need for --yes)
 choco feature enable --name=allowGlobalConfirmation
 
@@ -277,15 +279,14 @@ Set-RegionalSettings
 Set-BaseSettings
 Set-Libraries
 
-Write-BoxstarterMessage "Starting installs"
+Write-BoxstarterMessage "Installing Core Apps"
 Install-CoreApps
+
+Write-BoxstarterMessage "Installing Home Apps"
 Install-Home
 
-Write-BoxstarterMessage "Installing dev apps"
+Write-BoxstarterMessage "Installing dev"
 Install-Dev
-
-# install chocolatey as last choco package
-choco install chocolatey --limitoutput
 
 # re-enable chocolatey default confirmation behaviour
 choco feature disable --name=allowGlobalConfirmation
