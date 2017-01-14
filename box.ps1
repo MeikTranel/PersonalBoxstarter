@@ -107,7 +107,7 @@ function Install-CoreApps
     choco install vlc --limitoutput
     choco install notepadplusplus.install   --limitoutput
     choco install 7zip.install              --limitoutput
-    choco install malwarebytes.install --limitoutput
+    choco install malwarebytes --limitoutput
 }
 
 function Install-Home
