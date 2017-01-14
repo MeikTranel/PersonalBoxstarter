@@ -54,16 +54,8 @@ function Clear-Checkpoints
     }
 }
 
-function Install-WindowsUpdate
-{
-	Disable-MicrosoftUpdate
-	Enable-MicrosoftUpdate
-	Install-WindowsUpdate -AcceptEula
-	#if (Test-PendingReboot) { Invoke-Reboot }
-}
 
 function Install-WebPackage
-
 {
     param(
         $packageName,
@@ -293,9 +285,5 @@ Install-Dev
 choco feature disable --name=allowGlobalConfirmation
 
 if (Test-PendingReboot) { Invoke-Reboot }
-
-# rerun windows update after we have installed everything
-Write-BoxstarterMessage "Windows update..."
-Install-WindowsUpdate
 
 Clear-Checkpoints
