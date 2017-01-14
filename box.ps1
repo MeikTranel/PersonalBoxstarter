@@ -56,11 +56,7 @@ function Clear-Checkpoints
 
 function Install-WindowsUpdate
 {
-    if (Test-Path env:\BoxStarter:SkipWindowsUpdate)
-    {
-        return
-    }
-
+	Disable-MicrosoftUpdate
 	Enable-MicrosoftUpdate
 	Install-WindowsUpdate -AcceptEula
 	#if (Test-PendingReboot) { Invoke-Reboot }
@@ -111,6 +107,7 @@ function Install-CoreApps
     choco install vlc --limitoutput
     choco install notepadplusplus.install   --limitoutput
     choco install 7zip.install              --limitoutput
+    choco install malwarebytes.install --limitoutput
 }
 
 function Install-Home
@@ -174,7 +171,9 @@ function Set-BaseSettings
     }
 
 	  Update-ExecutionPolicy -Policy Unrestricted
-
+	Disable-BingSearch
+	Disable-GameBarTips
+	Enable-RemoteDesktop
   	Set-Volume -DriveLetter $systemDriveLetter -NewFileSystemLabel "System"
   	Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -DisableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar
 
