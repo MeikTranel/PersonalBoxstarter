@@ -36,14 +36,15 @@ sp "HKCU:\Control Panel\Accessibility\StickyKeys" "Flags" "506"
 sp "HKCU:\Control Panel\Accessibility\Keyboard Response" "Flags" "122"
 sp "HKCU:\Control Panel\Accessibility\ToggleKeys" "Flags" "58"
 
-#echo "Restoring old volume slider"
-#force-mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\MTCUVC"
-#sp "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\MTCUVC" "EnableMtcUvc" 0
+echo "Restoring old volume slider"
+force-mkdir "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\MTCUVC"
+sp "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\MTCUVC" "EnableMtcUvc" 0
 
 echo "Setting folder view options"
 sp "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "Hidden" 1
 sp "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "HideFileExt" 0
 sp "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "HideDrivesWithNoMedia" 0
+sp "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "ShowSyncProviderNotifications" 0
 
 echo "Setting default explorer view to This PC"
 sp "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "LaunchTo" 1
