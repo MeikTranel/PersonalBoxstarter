@@ -29,7 +29,7 @@ function Set-Checkpoint
 
     $key = Get-CheckpointName $CheckpointName
     [Environment]::SetEnvironmentVariable($key, $CheckpointValue, "Machine") # for reboots
-	  [Environment]::SetEnvironmentVariable($key, $CheckpointValue, "Process") # for right now
+    [Environment]::SetEnvironmentVariable($key, $CheckpointValue, "Process") # for right now
 }
 
 function Get-Checkpoint
@@ -95,74 +95,51 @@ function Install-WebPackage
 
 function Install-CoreApps
 {
-    choco install googlechrome-allusers     --limitoutput
+    choco install googlechrome-allusers --limitoutput
     choco install vlc --limitoutput
-    choco install notepadplusplus.install   --limitoutput
-    choco install 7zip.install              --limitoutput
-    choco install malwarebytes --limitoutput
+    choco install 7zip.install --limitoutput
+    choco install javaruntime --limitoutput
 }
 
 function Install-Home
 {
     choco install spotify --limitoutput
     choco install steam --limitoutput
-    choco install speccy --limitoutput
-    choco install cpu-z --limitoutput
-    choco install handbrake --limitoutput
     choco install hexchat --limitoutput
-    choco install autohotkey --limitoutput
+    choco install discord --limitoutput
 }
+
+function Install-MiscTools
+{    
+    choco install procexp --limitoutput
+    choco install sysinternals --limitoutput
+    choco install handbrake --limitoutput
+    choco install audacity --limitoutput
+    choco install audacity-lame --limitoutput    
+}
+
 
 function Install-Dev
 {
     choco install git.install -params '"/GitAndUnixToolsOnPath"' --limitoutput
-    choco install sourcetree 	            --limitoutput
-    choco install nodejs                    --limitoutput
-    choco install python		    --limitoutput
-    choco install jdk8		        	    --limitoutput
-    choco install putty               	    --limitoutput
-    choco install fiddler4               	--limitoutput
-    choco install winscp              	    --limitoutput
-    choco install diffmerge				    --limitoutput
-    choco install atom                      --limitoutput
+    choco install jdk8 --limitoutput
+    choco install putty --limitoutput
+    choco install winmerge --limitoutput
+    choco install p4merge --limitoutput
+    choco install gitkraken --limitoutput
 
-    Write-BoxstarterMessage "Installing VS 2015 Community"
-    # install visual studio 2015 community and extensions
-    choco install visualstudio2015community #--limitoutput # -packageParameters "--AdminFile https://raw.githubusercontent.com/JonCubed/boxstarter/master/config/AdminDeployment.xml"
-
-    $VSCheckpoint = 'VSExtensions'
-    $VSDone = Get-Checkpoint -CheckpointName $VSCheckpoint
-
-    if (-not $VSDone)
-    {
-        #Install-ChocolateyVsixPackage 'PowerShell Tools for Visual Studio 2015' https://visualstudiogallery.msdn.microsoft.com/c9eb3ba8-0c59-4944-9a62-6eee37294597/file/199313/1/PowerShellTools.14.0.vsix
-        Install-WebPackage '.NET Core Visual Studio Extension' 'exe' '/quiet' $tempInstallFolder https://go.microsoft.com/fwlink/?LinkID=827546 'DotNetCore.1.0.1-VS2015Tools.Preview2.0.3.exe' # for visual studio
-        Set-Checkpoint -CheckpointName $VSCheckpoint -CheckpointValue 1
-    }
     Write-BoxstarterMessage "Installing Windows Dev Features"
     # Bash for windows
-    $features = choco list --source windowsfeatures
-    if ($features | Where-Object {$_ -like "*Linux*"})
-    {
-        choco install Microsoft-Windows-Subsystem-Linux           --source windowsfeatures --limitoutput
-    }
+    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All
     # hyper-v (required for windows containers)
-    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All    
 }
 
 function Set-BaseSettings
 {
     $checkpoint = 'BaseSettings'
     $done = Get-Checkpoint -CheckpointName $Checkpoint
-
-    if ($done) {
-        Write-BoxstarterMessage "Base settings are already configured"
-        choco install explorer-show-all-folders         --limitoutput
-        choco install explorer-expand-to-current-folder --limitoutput
-        return
-    }
-
-	  Update-ExecutionPolicy -Policy Unrestricted
+	Update-ExecutionPolicy -Policy Unrestricted
 	Disable-BingSearch
 	Disable-GameBarTips
 	Enable-RemoteDesktop
@@ -277,6 +254,10 @@ Install-CoreApps
 
 Write-BoxstarterMessage "Installing Home Apps"
 Install-Home
+
+Write-BoxstarterMessage "Installing Misc Tools"
+Install-MiscTools
+
 
 Write-BoxstarterMessage "Installing dev"
 Install-Dev
